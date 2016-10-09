@@ -1,12 +1,16 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 
 public class MainWindow extends JFrame {
 
-    private FilesSearching filesSearching;
+    private FilesSearching filesSearching = new FilesSearching();
     private JTabbedPane jTabbedPane;
     private JPanel mergeFile;
     private JPanel searchFile;
@@ -20,6 +24,8 @@ public class MainWindow extends JFrame {
     private SearchListModel model;
     private JScrollPane scrollModel;
     private JButton btnChoise;
+    private File file;
+    private JButton openFile;
 
 
     public MainWindow(String title){
@@ -80,17 +86,13 @@ public class MainWindow extends JFrame {
                     try {
                         model.removeAllElements();
                         String path = chooser.getSelectedFile().getPath();
-
-                        model.addElement(filesSearching.printAllFilesContentWord(path, text)); /* - переходим во вкладку поиск
-                                                                                               - вводим слово для поиска
-                                                                                               - выбираем директорию для поиска
-                                                                                               - выдает nullPointerException
-                                                                                               в данной строке
-                                                                                               */
+                        model.addAllElements(filesSearching.printAllFilesContentWord(path, text));
+                        if(model.getSize()==0){
+                            model.addElement("Совпадений не найдено");
+                        }
                         jList.updateUI();
                     } catch (IOException e1) {
                         e1.printStackTrace();
-                        model.addElement("Совпадений не найдено");
                     }
                 }
             }
@@ -98,6 +100,20 @@ public class MainWindow extends JFrame {
         });
         btnChoise.setBounds(20, 320, 220, 20);
         searchFile.add(btnChoise);
+
+        openFile = new JButton("Открыть файл");
+        openFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<String> fileNames = jList.getSelectedValuesList();
+                for(String s: fileNames){
+                    // здесь надо открыть файл
+                }
+            }
+        });
+        openFile.setBounds(480, 320, 220, 20);
+        searchFile.add(openFile);
+
 
         setVisible(true);
     }
@@ -114,34 +130,4 @@ public class MainWindow extends JFrame {
         jList.updateUI();
     }
 
-
-    //----------------------------------------------------
-    //Если данный метод находится в классе, то ошибки не возникает
-
-//    public String printAllFilesContentWord(String path, String word) throws IOException {
-//        String rezult = "Соответствия не установлено";
-//        File dir = new File(path);
-//        File[] files = dir.listFiles();
-//        if (files == null) throw new RuntimeException("Некорректная директория " + path + " либо произошла ошибка ввода/вывода");
-//        byte[] search_seq = word.getBytes();
-//        for (int i = 0; i < files.length; i++) {
-//            File file = files[i];
-//            if (file.isDirectory()) continue;
-//            BufferedInputStream fin = new BufferedInputStream(new FileInputStream(file));
-//            byte b;
-//            int c = 0;
-//            while ((b = (byte)fin.read()) != -1) {
-//                if (b == search_seq[c]){
-//                    c++;
-//                } else {
-//                    c = 0;
-//                    if(b == search_seq[c]) c++;
-//                }
-//                if(c == search_seq.length){
-//                    rezult = file.getName();
-//                }
-//            }
-//            fin.close();
-//        } return rezult;
-//    }
 }

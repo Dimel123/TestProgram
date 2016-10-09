@@ -2,15 +2,17 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FilesSearching {
     private String rezult;
 
-    public String printAllFilesContentWord(String path, String word) throws IOException {
-        rezult = "Соответствия не установлено";
+    public ArrayList<String> printAllFilesContentWord(String path, String word) throws IOException {
+        ArrayList<String> array = new ArrayList<>();
         File dir = new File(path);
         File[] files = dir.listFiles();
-        if (files == null) throw new RuntimeException("Некорректная директория " + path + " либо произошла ошибка ввода/вывода");
+        if (files == null) throw new RuntimeException("Некорректная директория " + path +
+                " либо произошла ошибка ввода/вывода");
         byte[] search_seq = word.getBytes();
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
@@ -26,12 +28,13 @@ public class FilesSearching {
                     if(b == search_seq[c]) c++;
                 }
                 if(c == search_seq.length){
-                    rezult = file.getName();
-                    break;
+                    rezult = file.getPath();
+                    array.add(rezult);
                 }
             }
             fin.close();
-        } return rezult;
+        }
+        return array;
     }
 }
 

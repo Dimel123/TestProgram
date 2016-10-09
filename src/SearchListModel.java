@@ -41,4 +41,8 @@ public class SearchListModel implements ListModel<String> {
     public void removeElement(int index){
         array.remove(index);
     }
+
+    public void addAllElements(ArrayList<String> arr){
+        array.addAll(arr);
+    }
 }
